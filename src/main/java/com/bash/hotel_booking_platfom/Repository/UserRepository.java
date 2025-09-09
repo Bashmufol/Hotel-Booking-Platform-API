@@ -10,7 +10,9 @@ public class UserRepository {
     private final Map<UUID, User> users = new HashMap<>();
 
     public User save(User user) {
+        if(user.getId() == null) {
             user.setId(UUID.randomUUID());
+        }
         return users.put(user.getId(), user);
     }
 
