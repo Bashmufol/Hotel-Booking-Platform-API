@@ -19,7 +19,8 @@ public class UserService {
         newUser.setEmail(user.getEmail());
         newUser.setName(user.getName());
         newUser.setAge(user.getAge());
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
+        return newUser;
     }
 
     public Optional<User> findUserById(UUID id) {
@@ -33,12 +34,13 @@ public class UserService {
         userRepository.deleteById(id);
         return "User deleted";
     }
-    public User updateUser(UUID id, User user) {
-        if(userRepository.findById(id).isPresent()) {
-            user.setId(id);
-            return userRepository.save(user);
-        }
-        return null;
+    public User updateUser(UUID id, User updatedUser) {
+        User oldUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+        oldUser.setName(updatedUser.getName());
+        oldUser.setAge(updatedUser.getAge());
+        oldUser.setEmail(updatedUser.getEmail());
+        return userRepository.save(oldUser);
     }
     public String deleteAllUsers() {
         userRepository.deleteAll();
