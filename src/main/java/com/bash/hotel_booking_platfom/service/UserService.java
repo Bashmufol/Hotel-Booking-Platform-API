@@ -15,12 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User createUser(User user){
-        User newUser = new User();
-        newUser.setEmail(user.getEmail());
-        newUser.setName(user.getName());
-        newUser.setAge(user.getAge());
-        userRepository.save(newUser);
-        return newUser;
+        return userRepository.save(user);
     }
 
     public Optional<User> findUserById(UUID id) {
@@ -31,8 +26,11 @@ public class UserService {
         return userRepository.findAll();
     }
     public String deleteUser(UUID id) {
-        userRepository.deleteById(id);
-        return "User deleted";
+        if (userRepository.findById(id).isPresent()) {
+            userRepository.deleteById(id);
+            return "User deleted";
+        }
+        return "User not found";
     }
     public User updateUser(UUID id, User updatedUser) {
         User existingUser = userRepository.findById(id)
