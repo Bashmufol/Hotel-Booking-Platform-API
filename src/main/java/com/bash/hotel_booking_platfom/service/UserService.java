@@ -35,12 +35,12 @@ public class UserService {
         return "User deleted";
     }
     public User updateUser(UUID id, User updatedUser) {
-        User oldUser = userRepository.findById(id)
+        User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
-        oldUser.setName(updatedUser.getName());
-        oldUser.setAge(updatedUser.getAge());
-        oldUser.setEmail(updatedUser.getEmail());
-        return userRepository.save(oldUser);
+        existingUser.setName(updatedUser.getName());
+        existingUser.setAge(updatedUser.getAge());
+        existingUser.setEmail(updatedUser.getEmail());
+        return userRepository.save(existingUser);
     }
     public String deleteAllUsers() {
         userRepository.deleteAll();
