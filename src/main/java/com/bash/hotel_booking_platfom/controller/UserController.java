@@ -1,6 +1,7 @@
 package com.bash.hotel_booking_platfom.controller;
 
 
+import com.bash.hotel_booking_platfom.dto.LoginRequest;
 import com.bash.hotel_booking_platfom.model.User;
 import com.bash.hotel_booking_platfom.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,14 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/create")
+    @PostMapping("/signup")
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest loginRequest) {
+       return userService.login(loginRequest);
     }
     @PostMapping("/update/{id}")
     public User updateUser(@PathVariable UUID id, @RequestBody User user) {
