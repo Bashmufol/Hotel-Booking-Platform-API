@@ -3,7 +3,7 @@ package com.bash.hotel_booking_platfom.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -16,6 +16,6 @@ public class Booking {
     private Room room;
     @ManyToOne
     private User user;
-    private LocalDateTime checkInTime;
-    private LocalDateTime checkOutTime;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
 }
