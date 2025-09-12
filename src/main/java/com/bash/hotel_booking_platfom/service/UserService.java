@@ -32,7 +32,7 @@ public class UserService {
     private final JwtService jwtService;
 
     @Caching(
-            put = { @CachePut(value = "USER_CACHE", key = "#result.getId()") },
+            put = { @CachePut(value = "USER_CACHE", key = "#result.id") },
             evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }
     )
     public User createUser(RegisterRequest registerRequest){
@@ -89,7 +89,7 @@ public class UserService {
     }
 
     @Caching(
-            put = { @CachePut(value = "USER_CACHE", key = "#result.getId()") },
+            put = { @CachePut(value = "USER_CACHE", key = "#result.id") },
             evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }
     )
     public User updateUser(UUID id, User updatedUser) {

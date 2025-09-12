@@ -15,7 +15,7 @@ public class Room {
     private String name;
     private String description;
     private BigDecimal pricePNight;
-
+    private boolean isAvailable;
     @ManyToOne
     @JoinTable(name = "owner_id")
     private User owner;
