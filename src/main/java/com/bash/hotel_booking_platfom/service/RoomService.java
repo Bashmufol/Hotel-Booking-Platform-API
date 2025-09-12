@@ -22,4 +22,9 @@ public class RoomService {
         return roomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
     }
+
+    public String deleteRoomById(Long id) {
+        roomRepository.deleteById(id);
+        return "Room deleted";
+    }
 }
