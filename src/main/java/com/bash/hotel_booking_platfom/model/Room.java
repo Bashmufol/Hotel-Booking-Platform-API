@@ -19,6 +19,6 @@ public class Room {
     @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
     @ManyToOne
-    @JoinTable(name = "owner_id")
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 }
