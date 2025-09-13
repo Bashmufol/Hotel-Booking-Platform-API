@@ -7,7 +7,9 @@ import com.bash.hotel_booking_platfom.model.Room;
 import com.bash.hotel_booking_platfom.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -16,8 +18,9 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final RoomRepository roomRepository;
 
-    public Booking bookRoom(long roomId, User user, LocalDateTime checkIn, LocalDateTime checkOut) {
-        Room room = roomRepository.findById(roomId)
+    @Transactional
+    public Booking bookRoom(long roomId, User user, LocalDate checkIn, LocalDate checkOut) {
+        Room room = roomRepository.findByIdForUpdate(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Room not found"));
 
         boolean isAvailable = bookingRepository.findConflictingBookings(roomId, checkIn, checkOut).isEmpty();
