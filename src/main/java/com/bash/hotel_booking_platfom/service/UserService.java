@@ -3,6 +3,8 @@ package com.bash.hotel_booking_platfom.service;
 import com.bash.hotel_booking_platfom.Repository.UserRepository;
 import com.bash.hotel_booking_platfom.dto.LoginRequest;
 import com.bash.hotel_booking_platfom.dto.RegisterRequest;
+import com.bash.hotel_booking_platfom.dto.UserDto;
+import com.bash.hotel_booking_platfom.model.ResponseModel;
 import com.bash.hotel_booking_platfom.model.Role;
 import com.bash.hotel_booking_platfom.model.User;
 import com.bash.hotel_booking_platfom.security.JwtService;
@@ -12,6 +14,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,17 +38,19 @@ public class UserService {
             put = { @CachePut(value = "USER_CACHE", key = "#result.id") },
             evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }
     )
-    public User createUser(RegisterRequest registerRequest){
+    public ResponseModel<UserDto> createUser(RegisterRequest registerRequest){
         if(userRepository.findByEmail(registerRequest.email()).isPresent()){
             throw new IllegalArgumentException("User already exists");
         }
+        HttpStatus status = HttpStatus.CREATED;
         User newUser = new User();
         newUser.setName(registerRequest.name());
         newUser.setAge(registerRequest.age());
         newUser.setEmail(registerRequest.email());
         newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
         newUser.setRole(Role.USER);
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
+        return new ResponseModel<>( "User Successfully Created", status.value(), new UserDto(newUser));
     }
 
     public String login(LoginRequest loginRequest) {
