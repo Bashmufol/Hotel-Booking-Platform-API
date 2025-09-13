@@ -4,6 +4,8 @@ import com.bash.hotel_booking_platfom.Repository.UserRepository;
 import com.bash.hotel_booking_platfom.dto.LoginRequest;
 import com.bash.hotel_booking_platfom.dto.RegisterRequest;
 import com.bash.hotel_booking_platfom.dto.UserDto;
+import com.bash.hotel_booking_platfom.exception.InvalidCredentialsException;
+import com.bash.hotel_booking_platfom.exception.UserNotFoundException;
 import com.bash.hotel_booking_platfom.model.ResponseModel;
 import com.bash.hotel_booking_platfom.model.Role;
 import com.bash.hotel_booking_platfom.model.User;
@@ -42,7 +44,6 @@ public class UserService {
         if(userRepository.findByEmail(registerRequest.email()).isPresent()){
             throw new IllegalArgumentException("User already exists");
         }
-        HttpStatus status = HttpStatus.CREATED;
         User newUser = new User();
         newUser.setName(registerRequest.name());
         newUser.setAge(registerRequest.age());
@@ -50,30 +51,30 @@ public class UserService {
         newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
         newUser.setRole(Role.USER);
         userRepository.save(newUser);
-        return new ResponseModel<>( "User Successfully Created", status.value(), new UserDto(newUser));
+        return new ResponseModel<>( "User Successfully Created", HttpStatus.CREATED.value(), new UserDto(newUser));
     }
 
-    public String login(LoginRequest loginRequest) {
+    public ResponseModel<String> login(LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password())
             );
             UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-            return jwtService.generateAccessToken(principal);
+            String token = jwtService.generateAccessToken(principal);
+            return new ResponseModel<>( "User Successfully Created", HttpStatus.OK.value(), token);
         } catch (AuthenticationException ex) {
-            throw new IllegalArgumentException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
     }
 
     @Cacheable(value = "USER_CACHE", key = "#id")
-    public User findUserById(UUID id) {
+    public ResponseModel<UserDto> findUserById(UUID id) {
         long start = System.nanoTime();
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         long end = System.nanoTime();
         log.info("DB call took {} ms", (end - start) / 1_000_000);
-
-        return user;
+        return new ResponseModel<>("User details fetched", HttpStatus.OK.value(), new UserDto(user));
     }
 
     @Cacheable(value = "USER_CACHE", key = "'all'")
@@ -97,13 +98,13 @@ public class UserService {
             put = { @CachePut(value = "USER_CACHE", key = "#result.id") },
             evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }
     )
-    public User updateUser(UUID id, User updatedUser) {
+    public ResponseModel<UserDto> updateUser(UUID id, User updatedUser) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
         existingUser.setName(updatedUser.getName());
         existingUser.setAge(updatedUser.getAge());
         existingUser.setEmail(updatedUser.getEmail());
-        return userRepository.save(existingUser);
+        return new ResponseModel<>("User details updated", HttpStatus.ACCEPTED.value(), new UserDto(existingUser));
     }
 
     @CacheEvict(value = "USER_CACHE", allEntries = true)
