@@ -14,7 +14,9 @@ public class Room {
     private long id;
     private String name;
     private String description;
+    @Column(name = "price_per_night", precision = 10, scale = 2, nullable = false)
     private BigDecimal pricePerNight;
+    @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
     @ManyToOne
     @JoinTable(name = "owner_id")

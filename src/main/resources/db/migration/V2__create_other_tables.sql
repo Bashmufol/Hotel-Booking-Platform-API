@@ -3,9 +3,9 @@ CREATE TABLE rooms (
                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                        name VARCHAR(255) NOT NULL,
                        description TEXT,
-                       price_p_night DECIMAL(10,2) NOT NULL,
+                       price_per_night DECIMAL(10,2) NOT NULL,
                        is_available BOOLEAN NOT NULL,
-                       owner_id CHAR(36),   -- UUID stored as string
+                       owner_id BINARY(16),   -- matches users.id
                        CONSTRAINT fk_room_owner FOREIGN KEY (owner_id) REFERENCES users(id)
 );
 
@@ -13,7 +13,7 @@ CREATE TABLE rooms (
 CREATE TABLE bookings (
                           id BIGINT AUTO_INCREMENT PRIMARY KEY,
                           room_id BIGINT NOT NULL,
-                          user_id CHAR(36) NOT NULL,   -- UUID stored as string
+                          user_id BINARY(16) NOT NULL,   -- matches users.id
                           check_in_date DATE NOT NULL,
                           check_out_date DATE NOT NULL,
                           CONSTRAINT fk_booking_room FOREIGN KEY (room_id) REFERENCES rooms(id),

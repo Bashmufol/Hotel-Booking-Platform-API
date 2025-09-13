@@ -16,6 +16,8 @@ public class Booking {
     private Room room;
     @ManyToOne
     private User user;
+    @Column(name = "check_in_date", nullable = false)
     private LocalDate checkInDate;
+    @Column(name = "check_out_date", nullable = false)
     private LocalDate checkOutDate;
 }
