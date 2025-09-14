@@ -15,6 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
 
@@ -25,8 +26,9 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseModel<String> login(@RequestBody LoginRequest loginRequest) {
-       return userService.login(loginRequest);
+        return userService.login(loginRequest);
     }
+
     @PostMapping("/update/{id}")
     public ResponseModel<UserDto> updateUser(@PathVariable UUID id, @RequestBody User user) {
         return userService.updateUser(id, user);
