@@ -37,8 +37,8 @@ public class UserService {
     private final JwtService jwtService;
 
     @Caching(
-            put = { @CachePut(value = "USER_CACHE", key = "#result.id") },
-            evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }
+            put = { @CachePut(value = "USER_CACHE", key = "#result.id") },      // cache the newly created user by ID
+            evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }        // clear the "all users" cache so it's rebuilt
     )
     public ResponseModel<UserDto> createUser(RegisterRequest registerRequest){
         if(userRepository.findByEmail(registerRequest.email()).isPresent()){
@@ -67,7 +67,7 @@ public class UserService {
         }
     }
 
-    @Cacheable(value = "USER_CACHE", key = "#id")
+    @Cacheable(value = "USER_CACHE", key = "#id")       // caches individual users by ID
     public ResponseModel<UserDto> findUserById(UUID id) {
         long start = System.nanoTime();
         User user = userRepository.findById(id)
@@ -77,14 +77,14 @@ public class UserService {
         return new ResponseModel<>("User details fetched", HttpStatus.OK.value(), new UserDto(user));
     }
 
-    @Cacheable(value = "USER_CACHE", key = "'all'")
+    @Cacheable(value = "USER_CACHE", key = "'all'")     // caches the list of all users
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "USER_CACHE", key = "#id"),
-            @CacheEvict(value = "USER_CACHE", key = "'all'")
+            @CacheEvict(value = "USER_CACHE", key = "#id"),     // remove this user from cache
+            @CacheEvict(value = "USER_CACHE", key = "'all'")    // also clear the "all users" cache
     })
     public String deleteUser(UUID id) {
         if (userRepository.findById(id).isPresent()) {
@@ -95,8 +95,8 @@ public class UserService {
     }
 
     @Caching(
-            put = { @CachePut(value = "USER_CACHE", key = "#result.id") },
-            evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }
+            put = { @CachePut(value = "USER_CACHE", key = "#result.id") },  // update individual user cache
+            evict = { @CacheEvict(value = "USER_CACHE", key = "'all'") }    // clear the "all users" cache
     )
     public ResponseModel<UserDto> updateUser(UUID id, User updatedUser) {
         User existingUser = userRepository.findById(id)
@@ -107,7 +107,7 @@ public class UserService {
         return new ResponseModel<>("User details updated", HttpStatus.ACCEPTED.value(), new UserDto(existingUser));
     }
 
-    @CacheEvict(value = "USER_CACHE", allEntries = true)
+    @CacheEvict(value = "USER_CACHE", allEntries = true)    // clears *all* entries in the user cache
     public String deleteAllUsers() {
         userRepository.deleteAll();
         return "All users deleted";

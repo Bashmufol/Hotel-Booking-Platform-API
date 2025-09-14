@@ -11,6 +11,13 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
 
+/**
+ * Configures Redis as the caching provider.
+ * - Sets default TTL (time-to-live) for cache entries.
+ * - Prevents caching of null values.
+ * - Serializes cache values as JSON using Jackson.
+ */
+
 @Configuration
 public class RedisConfig {
 
@@ -18,8 +25,8 @@ public class RedisConfig {
     public RedisCacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration
                 .defaultCacheConfig()
-                .disableCachingNullValues()
-                .entryTtl(Duration.ofMinutes(10))
+                .disableCachingNullValues()     // avoids storing null results
+                .entryTtl(Duration.ofMinutes(10))   // default TTL: 10 minutes
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
         return RedisCacheManager

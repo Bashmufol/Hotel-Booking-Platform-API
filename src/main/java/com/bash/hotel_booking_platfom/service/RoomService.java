@@ -23,9 +23,12 @@ public class RoomService {
 
 
     public Room createRoom(CreateRoomRequest request) {
+
+        // Ensure the owner exists before creating a room
         User owner = userRepository.findById(request.ownerId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        // Build the new room entity with default availability set to true
         Room room = new Room();
         room.setName(request.name());
         room.setDescription(request.description());
@@ -37,6 +40,8 @@ public class RoomService {
     }
 
     public List<Room> searchAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+
+        // Prevent invalid date ranges (check-in cannot be same as or after check-out)
         if(checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
             throw new IllegalArgumentException("Check-in date must be before check-out date");
         }
