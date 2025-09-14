@@ -1,6 +1,5 @@
 package com.bash.hotel_booking_platfom.redis;
 
-import com.bash.hotel_booking_platfom.model.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
