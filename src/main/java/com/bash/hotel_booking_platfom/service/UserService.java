@@ -5,7 +5,7 @@ import com.bash.hotel_booking_platfom.dto.LoginRequest;
 import com.bash.hotel_booking_platfom.dto.RegisterRequest;
 import com.bash.hotel_booking_platfom.dto.UserDto;
 import com.bash.hotel_booking_platfom.exception.InvalidCredentialsException;
-import com.bash.hotel_booking_platfom.exception.UserNotFoundException;
+import com.bash.hotel_booking_platfom.exception.ResourceNotFoundException;
 import com.bash.hotel_booking_platfom.model.ResponseModel;
 import com.bash.hotel_booking_platfom.model.Role;
 import com.bash.hotel_booking_platfom.model.User;
@@ -100,7 +100,7 @@ public class UserService {
     )
     public ResponseModel<UserDto> updateUser(UUID id, User updatedUser) {
         User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         existingUser.setName(updatedUser.getName());
         existingUser.setAge(updatedUser.getAge());
         existingUser.setEmail(updatedUser.getEmail());
