@@ -9,6 +9,9 @@ import com.bash.hotel_booking_platfom.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class RoomService {
@@ -29,6 +32,12 @@ public class RoomService {
         return roomRepository.save(room);
     }
 
+    public List<Room> searchAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+        if(checkIn.isAfter(checkOut) || checkIn.isEqual(checkOut)) {
+            throw new IllegalArgumentException("Check-in date must be before check-out date");
+        }
+        return roomRepository.findAvailableRooms(checkIn, checkOut);
+    }
 
     public Room findRoomById(Long id) {
         return roomRepository.findById(id)
