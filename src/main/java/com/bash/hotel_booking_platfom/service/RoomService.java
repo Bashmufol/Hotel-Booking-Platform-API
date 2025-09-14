@@ -4,19 +4,23 @@ import com.bash.hotel_booking_platfom.Repository.RoomRepository;
 import com.bash.hotel_booking_platfom.Repository.UserRepository;
 import com.bash.hotel_booking_platfom.dto.CreateRoomRequest;
 import com.bash.hotel_booking_platfom.exception.ResourceNotFoundException;
+import com.bash.hotel_booking_platfom.model.Booking;
 import com.bash.hotel_booking_platfom.model.Room;
 import com.bash.hotel_booking_platfom.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+
 
     public Room createRoom(CreateRoomRequest request) {
         User owner = userRepository.findById(request.ownerId())
@@ -38,6 +42,7 @@ public class RoomService {
         }
         return roomRepository.findAvailableRooms(checkIn, checkOut);
     }
+
 
     public Room findRoomById(Long id) {
         return roomRepository.findById(id)
